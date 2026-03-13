@@ -134,27 +134,25 @@ VentureMatch
 
 ---
 
-## Demo / Screenshots
+## 📸 Demo / Screenshots
 
 ### 🔐 Login Page
-![Login Page](screenshots/loginpage.png)
+![Login Page](VentureMatch-frontend/screenshots/loginpage.png)
 
 ### 📝 Signup Page
-![Signup Page](screenshots/signuppage.png)
+![Signup Page](VentureMatch-frontend/screenshots/signuppage.png)
 
 ### 📊 Dashboard
-![Dashboard](screenshots/dashboardpage.png)
+![Dashboard](VentureMatch-frontend/screenshots/dashboardpage.png)
 
 ### 🤝 Co-Founder Matching
-![Matching](screenshots/matchespage.png)
+![Matching](VentureMatch-frontend/screenshots/matchespage.png)
 
 ### 💬 Messages / Chat
-![Messages](screenshots/messagepage.png)
+![Messages](VentureMatch-frontend/screenshots/messagepage.png)
 
 ### 💡 Startup Ideas
-![Startup Ideas](screenshots/startupidea.png)
-
-
+![Startup Ideas](VentureMatch-frontend/screenshots/startupidea.png)
 ---
 
 # ⚙️ Installation
