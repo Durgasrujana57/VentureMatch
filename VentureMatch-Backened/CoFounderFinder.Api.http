@@ -1,0 +1,6 @@
+@CoFounderFinder.Api_HostAddress = http://localhost:5212
+
+GET {{CoFounderFinder.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

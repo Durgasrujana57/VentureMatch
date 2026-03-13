@@ -1,0 +1,63 @@
+<div class="idea-card" (click)="onClick()">
+  <div class="idea-header">
+    <h3 class="idea-title">{{ idea.title }}</h3>
+    <span class="idea-stage" [ngClass]="getStageClass(idea.stage)">
+      {{ idea.stage }}
+    </span>
+  </div>
+
+  <div class="idea-industry" *ngIf="idea.industry">
+    <i class="bi bi-tag"></i> {{ idea.industry }}
+  </div>
+
+  <p class="idea-description">{{ getShortDescription() }}</p>
+
+  <div class="idea-skills" *ngIf="idea.lookingForSkills?.length">
+    <div class="section-label">
+      <i class="bi bi-people"></i> Looking for skills:
+    </div>
+    <div class="tags-container">
+      <span *ngFor="let skill of idea.lookingForSkills.slice(0, 4)" class="skill-tag">
+        {{ skill }}
+      </span>
+      <span *ngIf="idea.lookingForSkills.length > 4" class="skill-tag more">
+        +{{ idea.lookingForSkills.length - 4 }}
+      </span>
+    </div>
+  </div>
+
+  <div class="idea-roles" *ngIf="idea.rolesNeeded?.length">
+    <div class="section-label">
+      <i class="bi bi-briefcase"></i> Roles needed:
+    </div>
+    <div class="tags-container">
+      <span *ngFor="let role of idea.rolesNeeded.slice(0, 3)" class="role-tag">
+        {{ role.role }}
+      </span>
+      <span *ngIf="idea.rolesNeeded.length > 3" class="role-tag more">
+        +{{ idea.rolesNeeded.length - 3 }}
+      </span>
+    </div>
+  </div>
+
+  <div class="idea-footer">
+    <div class="idea-creator" *ngIf="idea.user">
+      <img 
+        [src]="idea.user.avatarUrl || 'https://ui-avatars.com/api/?name=' + idea.user.fullName + '&background=667eea&color=fff&size=32'" 
+        class="creator-avatar"
+        [alt]="idea.user.fullName">
+      <span class="creator-name">{{ idea.user.fullName }}</span>
+    </div>
+    <div class="idea-stats">
+      <span class="stat" title="Views">
+        <i class="bi bi-eye"></i> {{ idea.views }}
+      </span>
+      <span class="stat" title="Applications">
+        <i class="bi bi-people"></i> {{ idea.applications }}
+      </span>
+      <span class="stat" title="Posted">
+        <i class="bi bi-clock"></i> {{ getTimeAgo(idea.createdAt) }}
+      </span>
+    </div>
+  </div>
+</div>

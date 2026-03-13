@@ -1,0 +1,85 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+  <div class="container">
+    <!-- Brand Logo -->
+    <a class="navbar-brand" routerLink="/">
+      <i class="bi bi-people-fill"></i> CoFounder Finder
+    </a>
+
+    <!-- Mobile Toggle Button -->
+    <button class="navbar-toggler" type="button" (click)="toggleMenu()" [attr.aria-expanded]="isMenuOpen">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <!-- Navbar Menu -->
+    <div class="collapse navbar-collapse" [class.show]="isMenuOpen">
+      <ul class="navbar-nav ms-auto">
+        <!-- Show these when NOT authenticated -->
+        <ng-container *ngIf="!isAuthenticated">
+          <li class="nav-item">
+            <a class="nav-link" routerLink="/login" (click)="isMenuOpen = false">
+              <i class="bi bi-box-arrow-in-right"></i> Login
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" routerLink="/register" (click)="isMenuOpen = false">
+              <i class="bi bi-person-plus"></i> Register
+            </a>
+          </li>
+        </ng-container>
+
+        <!-- Show these when authenticated -->
+        <ng-container *ngIf="isAuthenticated">
+          <li class="nav-item">
+            <a class="nav-link" routerLink="/dashboard" (click)="isMenuOpen = false">
+              <i class="bi bi-speedometer2"></i> Dashboard
+            </a>
+          </li>
+          
+          <!-- Profile Dropdown -->
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="profileDropdown" role="button" 
+               data-bs-toggle="dropdown" aria-expanded="false" (click)="toggleDropdown($event)">
+              <i class="bi bi-person-circle"></i> {{ user?.fullName || 'Profile' }}
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
+              <li>
+                <a class="dropdown-item" [routerLink]="['/profile', user?.id]" (click)="isMenuOpen = false">
+                  <i class="bi bi-person"></i> View Profile
+                </a>
+              </li>
+              <li>
+                <a class="dropdown-item" [routerLink]="['/profile/edit', user?.id]" (click)="isMenuOpen = false">
+                  <i class="bi bi-pencil-square"></i> Edit Profile
+                </a>
+              </li>
+              <li><hr class="dropdown-divider"></li>
+              <li>
+                <a class="dropdown-item text-warning" href="#" (click)="$event.preventDefault(); logout()">
+                  <i class="bi bi-box-arrow-right"></i> Logout
+                </a>
+              </li>
+            </ul>
+          </li>
+
+          <!-- Ideas Link - NEW -->
+          <li class="nav-item">
+            <a class="nav-link" routerLink="/ideas" routerLinkActive="active" (click)="isMenuOpen = false">
+              <i class="bi bi-lightbulb"></i> Ideas
+            </a>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link" routerLink="/matches" (click)="isMenuOpen = false">
+              <i class="bi bi-heart-fill"></i> Matches
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" routerLink="/messages" (click)="isMenuOpen = false">
+              <i class="bi bi-chat-dots-fill"></i> Messages
+            </a>
+          </li>
+        </ng-container>
+      </ul>
+    </div>
+  </div>
+</nav>

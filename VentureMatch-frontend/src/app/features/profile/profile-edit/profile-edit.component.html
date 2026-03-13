@@ -1,0 +1,304 @@
+<div class="edit-profile-container">
+  <div class="container">
+    <!-- Header -->
+    <div class="edit-profile-header">
+      <h1>Edit Profile</h1>
+      <p>Update your information to get better matches</p>
+    </div>
+
+    <!-- Loading State -->
+    <div *ngIf="loading" class="text-center my-5">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+      <p class="mt-2">Loading your profile...</p>
+    </div>
+
+    <!-- Error Message -->
+    <div *ngIf="errorMessage" class="alert alert-danger">
+      <i class="bi bi-exclamation-triangle-fill"></i>
+      {{ errorMessage }}
+    </div>
+
+    <!-- Success Message -->
+    <div *ngIf="successMessage" class="alert alert-success">
+      <i class="bi bi-check-circle-fill"></i>
+      {{ successMessage }}
+    </div>
+
+    <!-- Edit Profile Form -->
+    <div *ngIf="!loading" class="edit-profile-card">
+      <form [formGroup]="profileForm" (ngSubmit)="onSubmit()">
+        
+        <!-- Basic Information Section -->
+        <div class="form-section">
+          <h3>Basic Information</h3>
+          
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="fullName">Full Name *</label>
+                <div class="input-group">
+                  <i class="bi bi-person"></i>
+                  <input 
+                    type="text" 
+                    id="fullName"
+                    formControlName="fullName"
+                    class="form-control" 
+                    [class.is-invalid]="profileForm.get('fullName')?.invalid && profileForm.get('fullName')?.touched"
+                    placeholder="Enter your full name">
+                </div>
+                <div *ngIf="profileForm.get('fullName')?.invalid && profileForm.get('fullName')?.touched" class="invalid-feedback">
+                  Full name is required
+                </div>
+              </div>
+            </div>
+            
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="headline">Professional Headline</label>
+                <div class="input-group">
+                  <i class="bi bi-briefcase"></i>
+                  <input 
+                    type="text" 
+                    id="headline"
+                    formControlName="headline"
+                    class="form-control" 
+                    placeholder="e.g., Full Stack Developer">
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="bio">Bio</label>
+            <div class="input-group">
+              <i class="bi bi-file-text"></i>
+              <textarea 
+                id="bio"
+                formControlName="bio"
+                class="form-control" 
+                rows="4"
+                placeholder="Tell others about yourself, your experience, and what you're looking for"></textarea>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="location">Location</label>
+                <div class="input-group">
+                  <i class="bi bi-geo-alt"></i>
+                  <input 
+                    type="text" 
+                    id="location"
+                    formControlName="location"
+                    class="form-control" 
+                    placeholder="e.g., San Francisco, CA">
+                </div>
+              </div>
+            </div>
+            
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="availability">Availability</label>
+                <div class="input-group">
+                  <i class="bi bi-clock"></i>
+                  <select 
+                    id="availability"
+                    formControlName="availability"
+                    class="form-control">
+                    <option value="Full-time">Full-time</option>
+                    <option value="Part-time">Part-time</option>
+                    <option value="Weekends">Weekends</option>
+                    <option value="Evenings">Evenings</option>
+                    <option value="Flexible">Flexible</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="avatarUrl">Profile Picture URL</label>
+            <div class="input-group">
+              <i class="bi bi-image"></i>
+              <input 
+                type="url" 
+                id="avatarUrl"
+                formControlName="avatarUrl"
+                class="form-control" 
+                placeholder="https://example.com/avatar.jpg">
+            </div>
+            <small class="text-muted">Leave empty to use default avatar</small>
+          </div>
+        </div>
+
+        <!-- Skills Section -->
+        <div class="form-section">
+          <h3>Skills</h3>
+          <p class="section-description">Add your technical and professional skills</p>
+          
+          <div class="skills-input-container">
+            <div class="input-group">
+              <i class="bi bi-code-slash"></i>
+              <input 
+                type="text" 
+                [value]="currentSkill"
+                (input)="onSkillInput($event)"
+                (keyup.enter)="addSkill()"
+                class="form-control" 
+                placeholder="Type a skill and press Enter (e.g., JavaScript, Python)">
+            </div>
+            
+            <!-- Suggestions Dropdown -->
+            <div class="suggestions-dropdown" *ngIf="showSkillSuggestions && filteredSkills.length > 0">
+              <div class="suggestion-item" *ngFor="let skill of filteredSkills" (click)="selectSkill(skill)">
+                {{ skill }}
+              </div>
+            </div>
+          </div>
+
+          <!-- Skills Tags -->
+          <div class="tags-container" *ngIf="skillsArray.length > 0">
+            <div class="tag" *ngFor="let skill of skillsArray.controls; let i = index">
+              <span class="tag-text">{{ skill.value }}</span>
+              <button type="button" class="tag-remove" (click)="removeSkill(i)">
+                <i class="bi bi-x"></i>
+              </button>
+            </div>
+          </div>
+          <div class="no-items" *ngIf="skillsArray.length === 0">
+            <p>No skills added yet. Add your skills above.</p>
+          </div>
+        </div>
+
+        <!-- Interests Section -->
+        <div class="form-section">
+          <h3>Interests</h3>
+          <p class="section-description">What are you passionate about?</p>
+          
+          <div class="interests-input-container">
+            <div class="input-group">
+              <i class="bi bi-heart"></i>
+              <input 
+                type="text" 
+                [value]="currentInterest"
+                (input)="onInterestInput($event)"
+                (keyup.enter)="addInterest()"
+                class="form-control" 
+                placeholder="Type an interest and press Enter (e.g., AI, Startups)">
+            </div>
+            
+            <!-- Suggestions Dropdown -->
+            <div class="suggestions-dropdown" *ngIf="showInterestSuggestions && filteredInterests.length > 0">
+              <div class="suggestion-item" *ngFor="let interest of filteredInterests" (click)="selectInterest(interest)">
+                {{ interest }}
+              </div>
+            </div>
+          </div>
+
+          <!-- Interests Tags -->
+          <div class="tags-container" *ngIf="interestsArray.length > 0">
+            <div class="tag tag-interest" *ngFor="let interest of interestsArray.controls; let i = index">
+              <span class="tag-text">{{ interest.value }}</span>
+              <button type="button" class="tag-remove" (click)="removeInterest(i)">
+                <i class="bi bi-x"></i>
+              </button>
+            </div>
+          </div>
+          <div class="no-items" *ngIf="interestsArray.length === 0">
+            <p>No interests added yet. Add your interests above.</p>
+          </div>
+        </div>
+
+        <!-- Looking For Section -->
+        <div class="form-section">
+          <h3>Looking For</h3>
+          <p class="section-description">What kind of co-founder or partner are you seeking?</p>
+          
+          <div class="lookingfor-input">
+            <div class="input-group">
+              <i class="bi bi-search"></i>
+              <input 
+                type="text" 
+                #lookingForInput
+                class="form-control" 
+                placeholder="e.g., CTO, Technical Co-founder, Marketing Expert"
+                (keyup.enter)="addLookingFor('', lookingForInput.value); lookingForInput.value = ''">
+            </div>
+          </div>
+
+          <!-- Looking For Tags -->
+          <div class="tags-container" *ngIf="lookingForArray.length > 0">
+            <div class="tag tag-lookingfor" *ngFor="let item of lookingForArray.controls; let i = index">
+              <span class="tag-text">{{ item.value }}</span>
+              <button type="button" class="tag-remove" (click)="removeLookingFor(i)">
+                <i class="bi bi-x"></i>
+              </button>
+            </div>
+          </div>
+          <div class="no-items" *ngIf="lookingForArray.length === 0">
+            <p>No preferences added yet. What are you looking for?</p>
+          </div>
+        </div>
+
+        <!-- Social Links Section -->
+        <div class="form-section">
+          <h3>Social Links</h3>
+          <p class="section-description">Connect your professional profiles</p>
+          
+          <div class="form-group">
+            <label for="githubUrl">GitHub URL</label>
+            <div class="input-group">
+              <i class="bi bi-github"></i>
+              <input 
+                type="url" 
+                id="githubUrl"
+                formControlName="githubUrl"
+                class="form-control" 
+                placeholder="https://github.com/username">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="linkedinUrl">LinkedIn URL</label>
+            <div class="input-group">
+              <i class="bi bi-linkedin"></i>
+              <input 
+                type="url" 
+                id="linkedinUrl"
+                formControlName="linkedinUrl"
+                class="form-control" 
+                placeholder="https://linkedin.com/in/username">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="portfolioUrl">Portfolio URL</label>
+            <div class="input-group">
+              <i class="bi bi-briefcase"></i>
+              <input 
+                type="url" 
+                id="portfolioUrl"
+                formControlName="portfolioUrl"
+                class="form-control" 
+                placeholder="https://yourportfolio.com">
+            </div>
+          </div>
+        </div>
+
+        <!-- Form Actions -->
+        <div class="form-actions">
+          <button type="button" class="btn btn-outline-secondary" (click)="cancel()">
+            <i class="bi bi-x-lg"></i> Cancel
+          </button>
+          <button type="submit" class="btn btn-primary" [disabled]="profileForm.invalid || loading">
+            <span *ngIf="loading" class="spinner-border spinner-border-sm me-2"></span>
+            <i class="bi bi-check-lg"></i> Save Changes
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

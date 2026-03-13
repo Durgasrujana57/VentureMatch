@@ -1,0 +1,75 @@
+<div class="chat-list-container">
+  <!-- Header -->
+  <div class="chat-list-header">
+    <h2>Messages</h2>
+    <div class="search-box">
+      <i class="bi bi-search"></i>
+      <input 
+        type="text" 
+        [(ngModel)]="searchTerm" 
+        (ngModelChange)="filterMatches()"
+        placeholder="Search conversations..."
+        class="form-control">
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="loading" class="text-center py-5">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+    <p class="mt-2">Loading conversations...</p>
+  </div>
+
+  <!-- No Matches -->
+  <div *ngIf="!loading && matches.length === 0" class="empty-state">
+    <i class="bi bi-chat-dots"></i>
+    <h4>No conversations yet</h4>
+    <p>When you match with someone, you can chat here</p>
+    <a routerLink="/matches" class="btn btn-primary">
+      <i class="bi bi-heart-fill"></i> View Matches
+    </a>
+  </div>
+
+  <!-- No Search Results -->
+  <div *ngIf="!loading && matches.length > 0 && filteredMatches.length === 0" class="empty-state">
+    <i class="bi bi-search"></i>
+    <h4>No results found</h4>
+    <p>No conversations match "{{ searchTerm }}"</p>
+    <button class="btn btn-outline-primary" (click)="searchTerm = ''; filterMatches()">
+      Clear Search
+    </button>
+  </div>
+
+  <!-- Chat List -->
+  <div *ngIf="!loading && filteredMatches.length > 0" class="chat-list">
+    <div 
+      *ngFor="let match of filteredMatches" 
+      class="chat-item"
+      (click)="selectMatch(match.matchId)">
+      
+      <!-- Avatar -->
+      <div class="chat-avatar">
+        <img 
+          [src]="match.user.avatarUrl || 'https://ui-avatars.com/api/?name=' + match.user.fullName + '&background=667eea&color=fff&size=128'" 
+          [alt]="match.user.fullName">
+      </div>
+
+      <!-- Chat Info -->
+      <div class="chat-info">
+        <div class="chat-header">
+          <h4>{{ match.user.fullName }}</h4>
+          <span class="chat-time">{{ getLastMessageTime(match.lastMessage?.createdAt || match.matchedAt) }}</span>
+        </div>
+        
+        <p class="chat-preview">{{ getLastMessagePreview(match.lastMessage) }}</p>
+        <p class="chat-headline">{{ match.user.headline }}</p>
+      </div>
+
+      <!-- Unread Badge -->
+      <div class="chat-badge" *ngIf="match.unreadCount > 0">
+        <span class="badge bg-danger">{{ match.unreadCount }}</span>
+      </div>
+    </div>
+  </div>
+</div>

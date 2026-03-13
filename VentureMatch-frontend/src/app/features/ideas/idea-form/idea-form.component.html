@@ -1,0 +1,219 @@
+<div class="idea-form-container">
+  <div class="container">
+    <div class="form-card">
+      <h1>{{ isEditMode ? 'Edit Idea' : 'Post New Idea' }}</h1>
+      <p class="subtitle">Share your startup idea with potential co-founders</p>
+
+      <!-- Loading State -->
+      <div *ngIf="loading" class="text-center my-5">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+        <p class="mt-2">Loading idea...</p>
+      </div>
+
+      <!-- Error Message -->
+      <div *ngIf="error" class="alert alert-danger">
+        <i class="bi bi-exclamation-triangle-fill"></i>
+        {{ error }}
+      </div>
+
+      <!-- Form -->
+      <form *ngIf="!loading" [formGroup]="ideaForm" (ngSubmit)="onSubmit()">
+        <!-- Basic Info -->
+        <div class="form-section">
+          <h3>Basic Information</h3>
+          
+          <div class="form-group">
+            <label for="title">Idea Title *</label>
+            <input 
+              type="text" 
+              id="title"
+              formControlName="title"
+              class="form-control"
+              [class.is-invalid]="ideaForm.get('title')?.invalid && ideaForm.get('title')?.touched"
+              placeholder="e.g., AI-Powered Learning Platform">
+            <div *ngIf="ideaForm.get('title')?.invalid && ideaForm.get('title')?.touched" class="invalid-feedback">
+              Title is required
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="description">Description *</label>
+            <textarea 
+              id="description"
+              formControlName="description"
+              class="form-control"
+              [class.is-invalid]="ideaForm.get('description')?.invalid && ideaForm.get('description')?.touched"
+              rows="4"
+              placeholder="Describe your idea..."></textarea>
+            <div *ngIf="ideaForm.get('description')?.invalid && ideaForm.get('description')?.touched" class="invalid-feedback">
+              Description is required
+            </div>
+          </div>
+        </div>
+
+        <!-- Problem & Solution -->
+        <div class="form-section">
+          <h3>Problem & Solution</h3>
+          
+          <div class="form-group">
+            <label for="problemStatement">Problem Statement</label>
+            <textarea 
+              id="problemStatement"
+              formControlName="problemStatement"
+              class="form-control"
+              rows="3"
+              placeholder="What problem does your idea solve?"></textarea>
+          </div>
+
+          <div class="form-group">
+            <label for="solution">Solution</label>
+            <textarea 
+              id="solution"
+              formControlName="solution"
+              class="form-control"
+              rows="3"
+              placeholder="How does your idea solve this problem?"></textarea>
+          </div>
+        </div>
+
+        <!-- Category & Stage -->
+        <div class="form-section">
+          <h3>Category & Stage</h3>
+          
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="industry">Industry</label>
+                <select 
+                  id="industry"
+                  formControlName="industry"
+                  class="form-select">
+                  <option value="">Select Industry</option>
+                  <option *ngFor="let industry of industries" [value]="industry">
+                    {{ industry }}
+                  </option>
+                </select>
+              </div>
+            </div>
+
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="stage">Stage</label>
+                <select 
+                  id="stage"
+                  formControlName="stage"
+                  class="form-select">
+                  <option *ngFor="let stage of stages" [value]="stage">
+                    {{ stage }}
+                  </option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Looking For Skills -->
+        <div class="form-section">
+          <h3>Skills You're Looking For</h3>
+          <p class="section-hint">Add skills you need in your team</p>
+
+          <div class="skills-input">
+            <div class="input-group">
+              <input 
+                #skillInput
+                type="text"
+                class="form-control"
+                placeholder="e.g., Angular, Python, Marketing"
+                (keyup.enter)="addSkill(skillInput)">
+              <button type="button" class="btn-add" (click)="addSkill(skillInput)">
+                <i class="bi bi-plus-lg"></i> Add
+              </button>
+            </div>
+          </div>
+
+          <div class="skills-tags" *ngIf="lookingForSkills.length > 0">
+            <span *ngFor="let skill of lookingForSkills.controls; let i = index" class="skill-tag">
+              {{ skill.value }}
+              <i class="bi bi-x" (click)="removeSkill(i)"></i>
+            </span>
+          </div>
+        </div>
+
+        <!-- Roles Needed -->
+        <div class="form-section">
+          <div class="section-header">
+            <h3>Roles Needed</h3>
+            <button type="button" class="btn-add-role" (click)="addRole()">
+              <i class="bi bi-plus-lg"></i> Add Role
+            </button>
+          </div>
+
+          <div formArrayName="rolesNeeded">
+            <div *ngFor="let role of rolesNeeded.controls; let i = index" class="role-card" [formGroupName]="i">
+              <div class="role-header">
+                <h4>Role #{{ i + 1 }}</h4>
+                <button type="button" class="btn-remove-role" (click)="removeRole(i)" *ngIf="rolesNeeded.length > 1">
+                  <i class="bi bi-trash"></i>
+                </button>
+              </div>
+
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label [for]="'role-' + i">Role Title *</label>
+                    <input 
+                      [id]="'role-' + i"
+                      type="text"
+                      formControlName="role"
+                      class="form-control"
+                      placeholder="e.g., Frontend Developer, Marketing Lead">
+                  </div>
+                </div>
+
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label [for]="'commitment-' + i">Commitment</label>
+                    <select 
+                      [id]="'commitment-' + i"
+                      formControlName="commitment"
+                      class="form-select">
+                      <option *ngFor="let commitment of commitments" [value]="commitment">
+                        {{ commitment }}
+                      </option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label [for]="'skills-' + i">Required Skills (comma separated)</label>
+                <input 
+                  [id]="'skills-' + i"
+                  type="text"
+                  formControlName="skills"
+                  class="form-control"
+                  placeholder="e.g., JavaScript, React, Node.js">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Form Actions -->
+        <div class="form-actions">
+          <button type="button" class="btn-cancel" (click)="cancel()">
+            Cancel
+          </button>
+          <button 
+            type="submit" 
+            class="btn-submit" 
+            [disabled]="submitting">
+            <span *ngIf="submitting" class="spinner-border spinner-border-sm me-2"></span>
+            {{ isEditMode ? 'Update Idea' : 'Post Idea' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

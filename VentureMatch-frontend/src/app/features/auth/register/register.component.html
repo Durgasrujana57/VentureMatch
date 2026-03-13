@@ -1,0 +1,198 @@
+<div class="register-container">
+  <div class="register-card">
+    <div class="register-header">
+      <h2>Create Account</h2>
+      <p>Join CoFounder Finder today</p>
+    </div>
+
+    <div *ngIf="errorMessage" class="alert alert-danger">
+      {{ errorMessage }}
+    </div>
+
+    <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+      <!-- Full Name -->
+      <div class="form-group">
+        <label for="fullName">Full Name</label>
+        <div class="input-group">
+          <i class="bi bi-person"></i>
+          <input 
+            type="text" 
+            id="fullName"
+            formControlName="fullName"
+            class="form-control" 
+            [class.is-invalid]="submitted && f['fullName'].errors"
+            placeholder="Enter your full name">
+        </div>
+        <div *ngIf="submitted && f['fullName'].errors" class="invalid-feedback">
+          <div *ngIf="f['fullName'].errors['required']">Full name is required</div>
+        </div>
+      </div>
+
+      <!-- Email -->
+      <div class="form-group">
+        <label for="email">Email Address</label>
+        <div class="input-group">
+          <i class="bi bi-envelope"></i>
+          <input 
+            type="email" 
+            id="email"
+            formControlName="email"
+            class="form-control" 
+            [class.is-invalid]="submitted && f['email'].errors"
+            placeholder="Enter your email">
+        </div>
+        <div *ngIf="submitted && f['email'].errors" class="invalid-feedback">
+          <div *ngIf="f['email'].errors['required']">Email is required</div>
+          <div *ngIf="f['email'].errors['email']">Please enter a valid email</div>
+        </div>
+      </div>
+
+      <!-- Password -->
+      <div class="form-group">
+        <label for="password">Password</label>
+        <div class="input-group">
+          <i class="bi bi-lock"></i>
+          <input 
+            type="password" 
+            id="password"
+            formControlName="password"
+            class="form-control" 
+            [class.is-invalid]="submitted && f['password'].errors"
+            placeholder="Create a password">
+        </div>
+        <div *ngIf="submitted && f['password'].errors" class="invalid-feedback">
+          <div *ngIf="f['password'].errors['required']">Password is required</div>
+          <div *ngIf="f['password'].errors['minlength']">
+            Password must be at least 6 characters
+          </div>
+        </div>
+      </div>
+
+      <!-- Confirm Password -->
+      <div class="form-group">
+        <label for="confirmPassword">Confirm Password</label>
+        <div class="input-group">
+          <i class="bi bi-lock-fill"></i>
+          <input 
+            type="password" 
+            id="confirmPassword"
+            formControlName="confirmPassword"
+            class="form-control" 
+            [class.is-invalid]="submitted && f['confirmPassword'].errors"
+            placeholder="Confirm your password">
+        </div>
+        <div *ngIf="submitted && f['confirmPassword'].errors" class="invalid-feedback">
+          <div *ngIf="f['confirmPassword'].errors['required']">Please confirm your password</div>
+          <div *ngIf="f['confirmPassword'].errors['mismatch']">Passwords do not match</div>
+        </div>
+      </div>
+
+      <!-- Headline (Optional) -->
+      <div class="form-group">
+        <label for="headline">Professional Headline (Optional)</label>
+        <div class="input-group">
+          <i class="bi bi-briefcase"></i>
+          <input 
+            type="text" 
+            id="headline"
+            formControlName="headline"
+            class="form-control" 
+            placeholder="e.g., Full Stack Developer">
+        </div>
+      </div>
+
+      <!-- Location (Optional) -->
+      <div class="form-group">
+        <label for="location">Location (Optional)</label>
+        <div class="input-group">
+          <i class="bi bi-geo-alt"></i>
+          <input 
+            type="text" 
+            id="location"
+            formControlName="location"
+            class="form-control" 
+            placeholder="e.g., San Francisco, CA">
+        </div>
+      </div>
+
+      <!-- SKILLS SECTION - NEW -->
+      <div class="form-group">
+        <label>Skills (Add your technical skills)</label>
+        <div class="skills-input-container">
+          <div class="input-group mb-2">
+            <i class="bi bi-code-slash"></i>
+            <input 
+              type="text" 
+              #skillInput
+              class="form-control" 
+              placeholder="e.g., JavaScript, Python, Angular"
+              (keyup.enter)="addSkill(skillInput.value); skillInput.value = ''"
+              (keyup)="onSkillInput($event, skillInput.value)">
+          </div>
+          <div class="suggestions-dropdown" *ngIf="showSkillSuggestions && filteredSkills.length > 0">
+            <div class="suggestion-item" *ngFor="let skill of filteredSkills" 
+                 (click)="addSkill(skill); skillInput.value = ''; showSkillSuggestions = false">
+              {{ skill }}
+            </div>
+          </div>
+          <div class="skills-tags">
+            <span *ngFor="let skill of skills" class="skill-tag">
+              {{ skill }}
+              <i class="bi bi-x" (click)="removeSkill(skill)"></i>
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- INTERESTS SECTION - NEW -->
+      <div class="form-group">
+        <label>Interests (What are you passionate about?)</label>
+        <div class="interests-input-container">
+          <div class="input-group mb-2">
+            <i class="bi bi-heart"></i>
+            <input 
+              type="text" 
+              #interestInput
+              class="form-control" 
+              placeholder="e.g., AI, Startups, Web Development"
+              (keyup.enter)="addInterest(interestInput.value); interestInput.value = ''"
+              (keyup)="onInterestInput($event, interestInput.value)">
+          </div>
+          <div class="suggestions-dropdown" *ngIf="showInterestSuggestions && filteredInterests.length > 0">
+            <div class="suggestion-item" *ngFor="let interest of filteredInterests" 
+                 (click)="addInterest(interest); interestInput.value = ''; showInterestSuggestions = false">
+              {{ interest }}
+            </div>
+          </div>
+          <div class="interests-tags">
+            <span *ngFor="let interest of interests" class="interest-tag">
+              {{ interest }}
+              <i class="bi bi-x" (click)="removeInterest(interest)"></i>
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Password Strength Indicator -->
+      <div *ngIf="registerForm.get('password')?.value" class="password-strength">
+        <div class="strength-bar">
+          <div [class]="'strength-' + passwordStrength"></div>
+        </div>
+        <small>Password strength: {{ passwordStrengthText }}</small>
+      </div>
+
+      <button type="submit" class="btn-register" [disabled]="loading">
+        <span *ngIf="loading" class="spinner"></span>
+        <span *ngIf="!loading">Create Account</span>
+        <span *ngIf="loading">Creating account...</span>
+      </button>
+    </form>
+
+    <div class="register-footer">
+      <p>
+        Already have an account? 
+        <a routerLink="/login">Login</a>
+      </p>
+    </div>
+  </div>
+</div>

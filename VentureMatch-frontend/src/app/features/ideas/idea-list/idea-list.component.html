@@ -1,0 +1,107 @@
+<div class="ideas-container">
+  <div class="container">
+    <!-- Header -->
+    <div class="ideas-header">
+      <h1>Startup Ideas</h1>
+      <p>Discover and collaborate on amazing startup ideas</p>
+    </div>
+
+    <!-- Filters Section -->
+    <div class="filters-section">
+      <div class="search-box">
+        <i class="bi bi-search"></i>
+        <input 
+          type="text" 
+          [(ngModel)]="searchTerm"
+          (ngModelChange)="applyFilters()"
+          placeholder="Search ideas..."
+          class="form-control">
+      </div>
+
+      <div class="filter-controls">
+        <select 
+          [(ngModel)]="selectedIndustry" 
+          (ngModelChange)="applyFilters()"
+          class="form-select">
+          <option value="">All Industries</option>
+          <option *ngFor="let industry of industries" [value]="industry">
+            {{ industry }}
+          </option>
+        </select>
+
+        <select 
+          [(ngModel)]="selectedStage" 
+          (ngModelChange)="applyFilters()"
+          class="form-select">
+          <option value="">All Stages</option>
+          <option *ngFor="let stage of stages" [value]="stage">
+            {{ stage }}
+          </option>
+        </select>
+
+        <button class="btn-clear" (click)="clearFilters()" *ngIf="searchTerm || selectedIndustry || selectedStage">
+          <i class="bi bi-x-lg"></i> Clear
+        </button>
+      </div>
+
+      <button 
+        class="btn-create" 
+        (click)="createNewIdea()"
+        *ngIf="canCreateIdea()">
+        <i class="bi bi-plus-lg"></i> Post Idea
+      </button>
+    </div>
+
+    <!-- Error Message -->
+    <div *ngIf="error" class="alert alert-danger">
+      <i class="bi bi-exclamation-triangle-fill"></i>
+      {{ error }}
+      <button class="btn-retry" (click)="loadIdeas()">
+        <i class="bi bi-arrow-repeat"></i> Retry
+      </button>
+    </div>
+
+    <!-- Loading State -->
+    <div *ngIf="loading" class="text-center my-5">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+      <p class="mt-2">Loading ideas...</p>
+    </div>
+
+    <!-- No Results -->
+    <div *ngIf="!loading && filteredIdeas.length === 0" class="empty-state">
+      <i class="bi bi-lightbulb"></i>
+      <h3>No ideas found</h3>
+      <p *ngIf="searchTerm || selectedIndustry || selectedStage">
+        No ideas match your filters. Try adjusting your search.
+      </p>
+      <p *ngIf="!searchTerm && !selectedIndustry && !selectedStage">
+        Be the first to post a startup idea!
+      </p>
+      <div class="empty-actions">
+        <button 
+          *ngIf="canCreateIdea()" 
+          class="btn btn-primary" 
+          (click)="createNewIdea()">
+          Post an Idea
+        </button>
+        <button 
+          *ngIf="searchTerm || selectedIndustry || selectedStage" 
+          class="btn btn-outline-secondary" 
+          (click)="clearFilters()">
+          Clear Filters
+        </button>
+      </div>
+    </div>
+
+    <!-- Ideas Grid -->
+    <div *ngIf="!loading && filteredIdeas.length > 0" class="ideas-grid">
+      <app-idea-card 
+        *ngFor="let idea of filteredIdeas" 
+        [idea]="idea"
+        (ideaClick)="onIdeaClick($event)">
+      </app-idea-card>
+    </div>
+  </div>
+</div>

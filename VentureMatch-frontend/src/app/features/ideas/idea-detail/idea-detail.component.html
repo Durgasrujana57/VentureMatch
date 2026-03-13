@@ -1,0 +1,239 @@
+<div class="idea-detail-container">
+  <div class="container">
+    <!-- Back Button -->
+    <div class="back-button">
+      <button class="btn-back" (click)="goBack()">
+        <i class="bi bi-arrow-left"></i> Back to Ideas
+      </button>
+    </div>
+
+    <!-- Loading State -->
+    <div *ngIf="loading" class="text-center my-5">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+      <p class="mt-2">Loading idea...</p>
+    </div>
+
+    <!-- Error Message -->
+    <div *ngIf="error" class="alert alert-danger">
+      <i class="bi bi-exclamation-triangle-fill"></i>
+      {{ error }}
+      <button class="btn-retry" (click)="loadIdea()">
+        <i class="bi bi-arrow-repeat"></i> Retry
+      </button>
+    </div>
+
+    <!-- Success Message -->
+    <div *ngIf="showSuccessMessage" class="alert alert-success">
+      <i class="bi bi-check-circle-fill"></i>
+      {{ successMessage }}
+    </div>
+
+    <!-- Application Status for Non-Owners -->
+    <div *ngIf="!isOwner && applicationStatus" class="application-status-card">
+      <div class="status-icon" [ngClass]="'status-' + applicationStatus">
+        <i *ngIf="applicationStatus === 'pending'" class="bi bi-hourglass-split"></i>
+        <i *ngIf="applicationStatus === 'accepted'" class="bi bi-check-circle-fill"></i>
+        <i *ngIf="applicationStatus === 'rejected'" class="bi bi-x-circle-fill"></i>
+      </div>
+      <div class="status-content">
+        <h4>Application {{ applicationStatus | titlecase }}</h4>
+        <p *ngIf="applicationStatus === 'pending'">
+          Your application is pending review. The idea owner will respond soon.
+        </p>
+        <p *ngIf="applicationStatus === 'accepted'">
+          🎉 Congratulations! Your application has been accepted. You can now message the idea owner.
+        </p>
+        <p *ngIf="applicationStatus === 'rejected'">
+          Your application was not accepted. Keep looking for other great ideas!
+        </p>
+        <button *ngIf="applicationStatus === 'accepted'" class="btn-message" [routerLink]="['/messages', idea?.userId]">
+          <i class="bi bi-chat"></i> Message Creator
+        </button>
+      </div>
+    </div>
+
+    <!-- Idea Content -->
+    <div *ngIf="!loading && idea" class="idea-content">
+      <!-- Tabs for Owner -->
+      <div class="tabs" *ngIf="isOwner">
+        <button 
+          class="tab-btn" 
+          [class.active]="selectedTab === 'details'"
+          (click)="selectedTab = 'details'">
+          <i class="bi bi-info-circle"></i> Idea Details
+        </button>
+        <button 
+          class="tab-btn" 
+          [class.active]="selectedTab === 'applications'"
+          (click)="selectedTab = 'applications'">
+          <i class="bi bi-people"></i> Applications ({{ applications.length }})
+        </button>
+      </div>
+
+      <!-- Details Tab -->
+      <div *ngIf="selectedTab === 'details'" class="details-tab">
+        <div class="idea-header">
+          <h1>{{ idea.title }}</h1>
+          <span class="idea-stage" [ngClass]="getStageClass(idea.stage)">
+            {{ idea.stage }}
+          </span>
+        </div>
+
+        <div class="idea-meta">
+          <div class="meta-item" *ngIf="idea.industry">
+            <i class="bi bi-tag"></i> {{ idea.industry }}
+          </div>
+          <div class="meta-item">
+            <i class="bi bi-person"></i> 
+            <span class="creator-link" (click)="viewProfile(idea.userId)">
+              {{ idea.user?.fullName || 'Unknown' }}
+            </span>
+          </div>
+          <div class="meta-item">
+            <i class="bi bi-calendar"></i> Posted {{ formatDate(idea.createdAt) }}
+          </div>
+          <div class="meta-item">
+            <i class="bi bi-eye"></i> {{ idea.views }} views
+          </div>
+        </div>
+
+        <div class="idea-section" *ngIf="idea.description">
+          <h3>Description</h3>
+          <p>{{ idea.description }}</p>
+        </div>
+
+        <div class="idea-section" *ngIf="idea.problemStatement">
+          <h3>Problem Statement</h3>
+          <p>{{ idea.problemStatement }}</p>
+        </div>
+
+        <div class="idea-section" *ngIf="idea.solution">
+          <h3>Solution</h3>
+          <p>{{ idea.solution }}</p>
+        </div>
+
+        <div class="idea-section" *ngIf="idea.lookingForSkills?.length">
+          <h3>Looking For Skills</h3>
+          <div class="tags-container">
+            <span *ngFor="let skill of idea.lookingForSkills" class="skill-tag">
+              {{ skill }}
+            </span>
+          </div>
+        </div>
+
+        <div class="idea-section" *ngIf="idea.rolesNeeded?.length">
+          <h3>Roles Needed</h3>
+          <div class="roles-grid">
+            <div *ngFor="let role of idea.rolesNeeded" class="role-card">
+              <h4>{{ role.role }}</h4>
+              <p><strong>Commitment:</strong> {{ role.commitment }}</p>
+              <div class="role-skills">
+                <span *ngFor="let skill of role.skills" class="skill-tag small">
+                  {{ skill }}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="action-buttons">
+          <ng-container *ngIf="!isOwner">
+            <button 
+              *ngIf="!showApplyForm && !applicationStatus" 
+              class="btn-apply" 
+              (click)="showApplyForm = true">
+              <i class="bi bi-send"></i> Apply to Join
+            </button>
+            <button 
+              *ngIf="applicationStatus === 'accepted'"
+              class="btn-message" 
+              [routerLink]="['/messages', idea.userId]">
+              <i class="bi bi-chat"></i> Message Creator
+            </button>
+          </ng-container>
+
+          <ng-container *ngIf="isOwner">
+            <button class="btn-edit" (click)="editIdea()">
+              <i class="bi bi-pencil"></i> Edit Idea
+            </button>
+            <button class="btn-delete" (click)="deleteIdea()">
+              <i class="bi bi-trash"></i> Delete Idea
+            </button>
+          </ng-container>
+        </div>
+
+        <!-- Application Form -->
+        <div *ngIf="showApplyForm && !isOwner && !applicationStatus" class="application-form">
+          <h3>Apply to Join This Idea</h3>
+          <textarea 
+            [(ngModel)]="applicationMessage"
+            placeholder="Tell the creator why you'd be a great fit..."
+            rows="4"
+            class="form-control"></textarea>
+          <div class="form-actions">
+            <button class="btn-cancel" (click)="showApplyForm = false">Cancel</button>
+            <button 
+              class="btn-submit" 
+              (click)="applyToIdea()"
+              [disabled]="!applicationMessage.trim() || submitting">
+              <span *ngIf="submitting" class="spinner-border spinner-border-sm me-2"></span>
+              Submit Application
+            </button>
+          </div>
+        </div>
+
+        <!-- Already Applied Message -->
+        <div *ngIf="applicationStatus && !showApplyForm" class="already-applied">
+          <p><i class="bi bi-info-circle"></i> You have already applied to this idea.</p>
+        </div>
+      </div>
+
+      <!-- Applications Tab (Owner Only) -->
+      <div *ngIf="selectedTab === 'applications' && isOwner" class="applications-tab">
+        <h2>Applications ({{ applications.length }})</h2>
+
+        <div *ngIf="applications.length === 0" class="no-applications">
+          <i class="bi bi-inbox"></i>
+          <h3>No applications yet</h3>
+          <p>When people apply to join your idea, they'll appear here.</p>
+        </div>
+
+        <div *ngFor="let app of applications" class="application-card">
+          <div class="application-header">
+            <div class="applicant-info" (click)="viewProfile(app.userId)">
+              <img 
+                [src]="app.user?.avatarUrl || 'https://ui-avatars.com/api/?name=' + (app.user?.fullName || 'User') + '&background=667eea&color=fff&size=40'" 
+                class="applicant-avatar">
+              <div>
+                <h4>{{ app.user?.fullName || 'Unknown User' }}</h4>
+                <p class="applicant-headline">{{ app.user?.headline || '' }}</p>
+              </div>
+            </div>
+            <span class="application-status" [ngClass]="getStatusClass(app.status)">
+              {{ app.status }}
+            </span>
+          </div>
+
+          <div class="application-message">
+            <p>{{ app.message }}</p>
+          </div>
+
+          <div class="application-footer">
+            <span class="applied-date">Applied {{ formatDate(app.appliedAt) }}</span>
+            <div class="application-actions" *ngIf="app.status === 'pending'">
+              <button class="btn-accept" (click)="updateApplicationStatus(app.id, 'accepted')">
+                <i class="bi bi-check-lg"></i> Accept
+              </button>
+              <button class="btn-reject" (click)="updateApplicationStatus(app.id, 'rejected')">
+                <i class="bi bi-x-lg"></i> Reject
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

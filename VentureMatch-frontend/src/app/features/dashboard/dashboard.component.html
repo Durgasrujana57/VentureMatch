@@ -1,0 +1,143 @@
+<!-- Debug Info - Toggle with double-click -->
+<div *ngIf="showDebug" class="debug-info" (dblclick)="toggleDebug()">
+  <div class="debug-header">
+    <strong>🔍 DEBUG:</strong>
+    <span>Matches found: {{ potentialMatches.length }}</span>
+    <span>Loading: {{ loading }}</span>
+    <button class="debug-refresh" (click)="refreshMatches()" title="Refresh matches">
+      <i class="bi bi-arrow-repeat"></i> Refresh
+    </button>
+    <button class="debug-close" (click)="toggleDebug()" title="Close debug">✕</button>
+  </div>
+</div>
+
+<div class="dashboard-container">
+  <!-- Welcome Section -->
+  <div class="welcome-section">
+    <div class="container">
+      <h1>Welcome back, {{ user?.fullName || 'Founder' }}! 👋</h1>
+      <p>Find your perfect co-founder match</p>
+    </div>
+  </div>
+
+  <div class="container">
+    <!-- Error Message -->
+    <div *ngIf="errorMessage" class="alert alert-danger">
+      <i class="bi bi-exclamation-triangle-fill"></i>
+      <div class="alert-content">
+        <strong>Error:</strong> {{ errorMessage }}
+        <button *ngIf="errorMessage.includes('expired')" class="btn-login" routerLink="/login">
+          Go to Login
+        </button>
+      </div>
+    </div>
+
+    <!-- Loading State -->
+    <div *ngIf="loading" class="loading-section">
+      <div class="spinner"></div>
+      <p class="loading-text">Finding your perfect matches...</p>
+      <p class="loading-subtext">This may take a moment</p>
+    </div>
+
+    <!-- No Matches Found -->
+    <div *ngIf="!loading && potentialMatches.length === 0" class="no-matches">
+      <div class="no-matches-content">
+        <i class="bi bi-emoji-frown"></i>
+        <h2>No potential matches found</h2>
+        <p class="no-matches-message">
+          We couldn't find any matches for you at the moment. 
+          Try updating your profile with more skills and interests to get better matches!
+        </p>
+        <div class="action-buttons">
+          <a routerLink="/profile/edit" class="btn btn-primary">
+            <i class="bi bi-pencil"></i> Update Profile
+          </a>
+          <button class="btn btn-outline" (click)="refreshMatches()">
+            <i class="bi bi-arrow-repeat"></i> Refresh
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Matches Grid -->
+    <div *ngIf="!loading && potentialMatches.length > 0" class="matches-grid">
+      <div *ngFor="let match of potentialMatches" class="match-card">
+        <div class="match-header">
+          <div class="match-avatar">
+            <img 
+              [src]="match.user.avatarUrl || 'https://ui-avatars.com/api/?name=' + match.user.fullName + '&background=667eea&color=fff&size=128'" 
+              [alt]="match.user.fullName"
+              loading="lazy">
+          </div>
+          <div class="match-score" [style.background-color]="getMatchScoreColor(match.matchScore)">
+            {{ match.matchScore }}% Match
+          </div>
+        </div>
+        
+        <div class="match-body">
+          <h3 class="match-name">{{ match.user.fullName }}</h3>
+          <p class="match-headline">{{ match.user.headline || 'No headline' }}</p>
+          
+          <div class="match-location" *ngIf="match.user.location">
+            <i class="bi bi-geo-alt-fill"></i>
+            {{ match.user.location }}
+          </div>
+
+          <!-- Skills Section -->
+          <div class="skills-section" *ngIf="match.user.skills && match.user.skills.length > 0">
+            <h4>
+              <i class="bi bi-code-square"></i>
+              Skills
+            </h4>
+            <div class="skills-list">
+              <span *ngFor="let skill of match.user.skills.slice(0, 4)" class="skill-tag">
+                {{ skill }}
+              </span>
+              <span *ngIf="match.user.skills.length > 4" class="skill-tag more">
+                +{{ match.user.skills.length - 4 }}
+              </span>
+            </div>
+          </div>
+
+          <!-- Interests Section -->
+          <div class="interests-section" *ngIf="match.user.interests && match.user.interests.length > 0">
+            <h4>
+              <i class="bi bi-heart-fill"></i>
+              Interests
+            </h4>
+            <div class="interests-list">
+              <span *ngFor="let interest of match.user.interests.slice(0, 3)" class="interest-tag">
+                {{ interest }}
+              </span>
+              <span *ngIf="match.user.interests.length > 3" class="interest-tag more">
+                +{{ match.user.interests.length - 3 }}
+              </span>
+            </div>
+          </div>
+
+          <!-- Match Reason -->
+          <div class="match-reason" *ngIf="match.matchReason">
+            <i class="bi bi-star-fill"></i>
+            <span>{{ match.matchReason }}</span>
+          </div>
+        </div>
+
+        <div class="match-footer">
+          <button class="btn-pass" (click)="passUser(match.user.id, match.user.fullName)" title="Pass">
+            <i class="bi bi-x-lg"></i>
+            <span class="btn-text">Pass</span>
+          </button>
+          <button class="btn-like" (click)="likeUser(match.user.id, match.user.fullName)" title="Like">
+            <i class="bi bi-heart-fill"></i>
+            <span class="btn-text">Like</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Hint for debug toggle -->
+<div *ngIf="!showDebug" class="debug-hint" (click)="toggleDebug()">
+  <i class="bi bi-bug"></i> Show debug info
+</div>

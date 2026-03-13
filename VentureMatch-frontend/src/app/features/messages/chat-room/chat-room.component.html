@@ -1,0 +1,101 @@
+<div class="chat-room-container">
+  <!-- Header -->
+  <div class="chat-header">
+    <button class="btn-back" (click)="goBack()">
+      <i class="bi bi-arrow-left"></i>
+    </button>
+
+    <div class="chat-user-info" *ngIf="match" (click)="viewProfile()">
+      <img 
+        [src]="match.user.avatarUrl || 'https://ui-avatars.com/api/?name=' + match.user.fullName + '&background=667eea&color=fff&size=128'" 
+        [alt]="match.user.fullName"
+        class="chat-avatar">
+      <div class="chat-user-details">
+        <h4>{{ match.user.fullName }}</h4>
+        <p class="chat-headline">{{ match.user.headline }}</p>
+        <p class="typing-indicator" *ngIf="otherUserTyping">{{ match.user.fullName }} is typing...</p>
+      </div>
+    </div>
+
+    <div class="chat-actions">
+      <button class="btn-icon" (click)="viewProfile()" title="View Profile">
+        <i class="bi bi-person"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- Messages Area -->
+  <div class="messages-container" #messagesContainer>
+    <!-- Loading State -->
+    <div *ngIf="loading" class="text-center py-5">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+      <p class="mt-2">Loading messages...</p>
+    </div>
+
+    <!-- Empty State -->
+    <div *ngIf="!loading && messages.length === 0" class="empty-messages">
+      <i class="bi bi-chat-dots"></i>
+      <h4>No messages yet</h4>
+      <p>Send a message to start the conversation!</p>
+    </div>
+
+    <!-- Messages List -->
+    <div *ngIf="!loading && messages.length > 0" class="messages-list">
+      <!-- Date separator -->
+      <ng-container *ngFor="let message of messages; let i = index">
+        <div class="date-separator" *ngIf="shouldShowDate(i)">
+          <span>{{ getMessageDate(message.createdAt) }}</span>
+        </div>
+
+        <!-- Message bubble -->
+        <div 
+          class="message" 
+          [class.message-mine]="message.isMine"
+          [class.message-other]="!message.isMine"
+          (click)="markAsRead(message)">
+          
+          <div class="message-bubble">
+            <div class="message-content">{{ message.content }}</div>
+            <div class="message-meta">
+              <span class="message-time">{{ formatTime(message.createdAt) }}</span>
+              <i *ngIf="message.isMine" class="bi bi-check2" [class.text-primary]="message.isRead"></i>
+              <i *ngIf="message.isMine && message.isRead" class="bi bi-check2-all text-primary"></i>
+            </div>
+          </div>
+        </div>
+      </ng-container>
+    </div>
+
+    <!-- Typing Indicator (separate from messages) -->
+    <div class="typing-indicator-container" *ngIf="otherUserTyping && !loading">
+      <div class="typing-bubble">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+      <span class="typing-text">{{ match?.user?.fullName }} is typing...</span>
+    </div>
+  </div>
+
+  <!-- Message Input -->
+  <div class="message-input-container">
+    <textarea
+      #messageInput
+      [(ngModel)]="newMessage"
+      (ngModelChange)="onTyping()"
+      (keypress)="onKeyPress($event)"
+      placeholder="Type a message..."
+      rows="1"
+      class="message-input"
+      [disabled]="loading"></textarea>
+    
+    <button 
+      class="btn-send" 
+      (click)="sendMessage()"
+      [disabled]="!newMessage.trim() || sending || loading">
+      <i class="bi bi-send-fill"></i>
+    </button>
+  </div>
+</div>
