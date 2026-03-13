@@ -134,25 +134,26 @@ VentureMatch
 
 ---
 
-# 📸 Screenshots
+## Demo / Screenshots
 
-## 🔐 Login Page
+### 🔐 Login Page
 ![Login Page](screenshots/loginpage.png)
 
-## 📝 Signup Page
+### 📝 Signup Page
 ![Signup Page](screenshots/signuppage.png)
 
-## 📊 Dashboard
+### 📊 Dashboard
 ![Dashboard](screenshots/dashboardpage.png)
 
-## 🤝 Co-Founder Matching
+### 🤝 Co-Founder Matching
 ![Matching](screenshots/matchespage.png)
 
-## 💬 Messages / Chat
+### 💬 Messages / Chat
 ![Messages](screenshots/messagepage.png)
 
-## 💡 Startup Ideas
+### 💡 Startup Ideas
 ![Startup Ideas](screenshots/startupidea.png)
+
 
 ---
 
