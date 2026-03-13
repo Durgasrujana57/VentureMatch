@@ -1,59 +1,144 @@
-# CofounderFinderFrontend
+🚀 VentureMatch – Co-Founder Finder Platform
+1️⃣ Project Title
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.2.1.
+VentureMatch is a platform that helps entrepreneurs find startup co-founders based on skills, interests, and startup ideas.
 
-## Development server
+2️⃣ Project Description
 
-To start a local development server, run:
+VentureMatch is a full-stack web application designed to connect entrepreneurs who want to build startups but need the right partners.
 
-```bash
+Users can create profiles, discover potential co-founders, collaborate on startup ideas, and communicate through real-time chat.
+
+The project demonstrates modern full-stack development using Angular, ASP.NET Core Web API, and MongoDB.
+
+
+## Demo / Screenshots
+
+### 🔐 Login Page
+![Login Page](screenshots/loginpage.png)
+
+### 📝 Signup Page
+![Signup Page](screenshots/signuppage.png)
+
+### 📊 Dashboard
+![Dashboard](screenshots/dashboardpage.png)
+
+### 🤝 Co-Founder Matching
+![Matching](screenshots/matchespage.png)
+
+### 💬 Messages / Chat
+![Messages](screenshots/messagepage.png)
+
+### 💡 Startup Ideas
+![Startup Ideas](screenshots/startupidea.png)
+
+4️⃣ Features
+
+✔ User registration and login
+✔ Secure authentication using JWT
+✔ User profile creation and management
+✔ Co-founder discovery system
+✔ Like / pass potential co-founders
+✔ Mutual match detection
+✔ Real-time messaging using SignalR
+✔ Startup idea posting and collaboration
+✔ Apply to join startup teams
+
+5️⃣ Tech Stack
+Frontend
+
+Angular
+
+TypeScript
+
+Bootstrap
+
+RxJS
+
+Backend
+
+ASP.NET Core Web API
+
+.NET
+
+MongoDB Atlas
+
+Tools
+
+JWT Authentication
+
+SignalR
+
+Swagger
+
+6️⃣ Project Structure
+VentureMatch
+│
+├── backend
+│   ├── Controllers
+│   ├── Models
+│   ├── DTOs
+│   ├── Services
+│   ├── Data
+│   └── Program.cs
+│
+├── frontend
+│   ├── src
+│   │   ├── app
+│   │   ├── assets
+│   │   └── environments
+│   └── package.json
+│
+├── screenshots
+│   ├── login.png
+│   ├── dashboard.png
+│   ├── matching.png
+│   ├── chat.png
+│   └── ideas.png
+│
+└── README.md
+7️⃣ Installation
+
+Clone the repository
+
+git clone https://github.com/yourusername/VentureMatch.git
+cd VentureMatch
+8️⃣ Run the Project
+Backend
+cd backend
+dotnet restore
+dotnet run
+
+Backend runs at:
+
+http://localhost:5000
+
+Swagger API documentation:
+
+http://localhost:5000/swagger
+Frontend
+cd frontend
+npm install
 ng serve
-```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+Frontend runs at:
 
-## Code scaffolding
+http://localhost:4200
+9️⃣ Future Improvements
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+AI-based co-founder recommendations
 
-```bash
-ng generate component component-name
-```
+Email notifications
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+Push notifications
 
-```bash
-ng generate --help
-```
+Mobile application version
 
-## Building
+Team collaboration features
 
-To build the project run:
+🔟 Author
 
-```bash
-ng build
-```
+Durga Srujana
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+GitHub
+https://github.com/DurgaSrujana57

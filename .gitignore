@@ -1,0 +1,21 @@
+# Build folders
+bin/
+obj/
+dist/
+node_modules/
+
+# IDE folders
+.vs/
+.vscode/
+
+# Runtime data
+*.log
+*.tmp
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# User-specific files
+*.user
+appsettings.Development.json
